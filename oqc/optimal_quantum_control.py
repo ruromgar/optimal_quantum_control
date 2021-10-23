@@ -9,9 +9,6 @@ from scipy.optimize import minimize
 from noisyopt import minimizeSPSA
 
 
-# from qiskit.algorithms.optimizers.optimizer import SPSA
-
-
 class OptimalQuantumControl:
     def __init__(
             self,
