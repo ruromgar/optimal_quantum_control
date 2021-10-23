@@ -48,7 +48,7 @@ class OptimalQuantumControl:
         self._logger.info('Calculating unitary GRAPE...')
         u_matrix = expm(-1j * self._time_derivative * self.calculate_hamiltonian(control_params[0]))
         for w in control_params[1:]:
-            u_matrix = np.matmul(expm(-1j * control_params * self.calculate_hamiltonian(w)), u_matrix)
+            u_matrix = np.matmul(expm(-1j * self._time_derivative * self.calculate_hamiltonian(w)), u_matrix)
         return u_matrix
 
     def fidelity(self, control_params):
