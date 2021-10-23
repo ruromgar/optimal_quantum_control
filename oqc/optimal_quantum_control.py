@@ -1,12 +1,13 @@
 import logging
+
 import numpy as np
+from noisyopt import minimizeSPSA
 from qiskit import QuantumCircuit, pulse
 from qiskit.test.mock import FakeValencia
-
-from .config import config
 from scipy.linalg import expm
 from scipy.optimize import minimize
-from noisyopt import minimizeSPSA
+
+from .config import config
 
 
 class OptimalQuantumControl:
@@ -110,15 +111,19 @@ class OptimalQuantumControl:
                 pulse.play(pulse.Constant(self._time_derivative, w), pulse.DriveChannel(0))
 
         cir.add_calibration('h', [0], h_q0)
-
         return cir
 
     def calculate_hamiltonian(self, dt):
-        """TBD
+        """Calculates the hamiltonian matrix
+
+        Parameters
+        -------
+        dt
+            Hamiltonian constant Dt
 
         Returns
         -------
-        TBD
+        Hamiltonian matrix
         """
 
         pauli_x = np.array([[0, 1], [1, 0]])
