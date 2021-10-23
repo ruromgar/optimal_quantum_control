@@ -65,8 +65,8 @@ class OptimalQuantumControl:
         """
 
         self._logger.info('Calculating fidelity...')
-        d = self._target_gate.shape[1]
-        return ((abs(np.trace(np.dot(self._target_gate, self.unitary_grape(control_params))))) ** 2) / (d * d)
+        d2 = np.power(self._target_gate.shape[1], 2)
+        return 1 - ((abs(np.trace(np.dot(self._target_gate, self.unitary_grape(control_params))))) ** 2) / d2
 
     def control(self):
         """Maximizes the fidelity between the target gate and the unitary matrix,
@@ -80,9 +80,9 @@ class OptimalQuantumControl:
         self._logger.info('Optimizing fidelity...')
         bounds = [(0, 1) for _ in range(len(self._initial_control_params))]
         if self._ex_situ:
-            opt = minimize(lambda w: 1-self.fidelity(w), x0=self._initial_control_params, bounds=bounds)
+            opt = minimize(self.fidelity, x0=self._initial_control_params, bounds=bounds)
         else:
-            opt = minimizeSPSA(lambda w: 1-self.fidelity(w), x0=self._initial_control_params, bounds=bounds)
+            opt = minimizeSPSA(self.fidelity, x0=self._initial_control_params, bounds=bounds)
         return opt.x
 
     def grape_pulse(self, control_params):
@@ -122,7 +122,7 @@ class OptimalQuantumControl:
         pauli_x = np.array([[0, 1], [1, 0]])
         pauli_z = np.array([[1, 0], [0, -1]])
         identity = np.array([[1, 0], [0, 1]])
-        amplitude = self._backend.configuration().hamiltonian['vars']['omegad0']
-        frequency = self._backend.properties().frequency(0)
+        amplitude = self._backend.configuration().hamiltonian['vars']['omegad0'] / 10e9
+        frequency = self._backend.properties().frequency(0) / 10e9
 
-        return ((1/2) * frequency * (identity - pauli_z)) + (amplitude * dt * pauli_x)
+        return ((1 / 2) * frequency * (identity - pauli_z)) + (amplitude * dt * pauli_x)
