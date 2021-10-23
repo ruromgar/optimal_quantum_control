@@ -1,8 +1,6 @@
 from unittest.mock import Mock
 
-import pytest
-from ..application.optimal_quantum_control import OptimalQuantumControl
-from ..config import test_config as config
+from optimal_quantum_control.oqc.optimal_quantum_control import OptimalQuantumControl
 
 import numpy as np
 
