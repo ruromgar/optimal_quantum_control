@@ -45,7 +45,7 @@ class OptimalQuantumControl:
         Unitary matrix
         """
 
-        self._logger.info('Calculating unitary GRAPE...')
+        # self._logger.info('Calculating unitary GRAPE...')
         u_matrix = expm(-1j * self._time_derivative * self.calculate_hamiltonian(control_params[0]))
         for w in control_params[1:]:
             u_matrix = np.matmul(expm(-1j * self._time_derivative * self.calculate_hamiltonian(w)), u_matrix)
@@ -66,7 +66,7 @@ class OptimalQuantumControl:
 
         self._logger.info('Calculating fidelity...')
         d2 = np.power(self._target_gate.shape[1], 2)
-        fid = 1 - ((abs(np.trace(np.dot(self._target_gate.T.conj(), self.unitary_grape(control_params))))) ** 2) / d2
+        fid = 1 - ((abs(np.trace(np.matmul(self._target_gate.T.conj(), self.unitary_grape(control_params))))) ** 2) / d2
         print(fid)
         return fid
 
@@ -124,7 +124,7 @@ class OptimalQuantumControl:
         pauli_x = np.array([[0, 1], [1, 0]])
         pauli_z = np.array([[1, 0], [0, -1]])
         identity = np.array([[1, 0], [0, 1]])
-        amplitude = self._backend.configuration().hamiltonian['vars']['omegad0'] / 10e9
-        frequency = self._backend.properties().frequency(0) / 10e9
+        amplitude = 1 # self._backend.configuration().hamiltonian['vars']['omegad0'] / 10e9
+        frequency = 1 # self._backend.properties().frequency(0) / 10e9
 
         return ((1 / 2) * frequency * (identity - pauli_z)) + (amplitude * dt * pauli_x)
