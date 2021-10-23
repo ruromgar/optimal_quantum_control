@@ -2,7 +2,6 @@ import logging
 import numpy as np
 
 from .config import config
-import numpy as np
 from scipy.linalg import expm
 
 
