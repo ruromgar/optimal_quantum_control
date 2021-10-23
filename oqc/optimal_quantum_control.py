@@ -1,7 +1,7 @@
 import logging
 import numpy as np
 from qiskit import QuantumCircuit, pulse
-from qiskit.test.mock import FakeAlmaden, FakeValencia
+from qiskit.test.mock import FakeValencia
 
 from .config import config
 from scipy.linalg import expm
@@ -132,7 +132,7 @@ class OptimalQuantumControl:
         pauli_x = np.array([[0, 1], [1, 0]])
         pauli_z = np.array([[1, 0], [0, -1]])
         identity = np.array([[1, 0], [0, 1]])
-        amplitude = backend.configuration().hamiltonian['vars']['omegad0']
+        amplitude = self._backend.configuration().hamiltonian['vars']['omegad0']
         frequency = self._backend.properties().frequency(0)
 
         return ((1/2) * frequency * (identity - pauli_z)) + (amplitude * dt * pauli_x)
