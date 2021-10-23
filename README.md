@@ -1,5 +1,20 @@
 # Improving Quantum Gates With Optimal Quantum Control
 
+## Abstract
+It is necessary to improve the fidelity of quantum gates to archive computational advantage with quantum computers. An alternative to do that is to use optimal quantum control. This is based on optimizing the parameters of a Hamiltonian to maximize the fidelity with a target quantum gate. The evaluation of the fidelity can be carried out numerically (ex-situ) or experimentally (in-situ). In this project, we propose implementing a Qiskit library to perform optimal quantum control.
+
+Our objective is to build a Qiskit library to perform ex-situ and in-situ optimal quantum control. Our control parameters will be the amplitudes of a GRAPE (Gradient Ascent Pulse Engineering) pulse, which will be implemented using Qiskit Pulse. The experimental evaluation of the fidelity will be performed by Direct Fidelity Estimation. We also propose a mixed protocol, where first the ex-situ quantum control is carried out, to then refine the result with in-situ quantum control. We expect to implement some relevant gate with our routines, such as NOT-gate or Hadamard.
+
+## Members
+- Luciano Pereira Valenzuela
+- Rafael González López
+- Miguel Ángel Palomo Marcos
+- Alejandro Bravo
+- Rubén Romero García
+
+## Entregable
+Github repository with the code to perform optimal quantum control. Include some examples for a single-qubit.
+
 This project is available in TestPypi under https://test.pypi.org/project/oqc/
 
 `pip install -i https://test.pypi.org/simple/ oqc==1.0.1`
