@@ -5,7 +5,7 @@
 from setuptools import setup, find_packages
 setup(
     name='oqc',
-    version='1.0.1',
+    version='1.0.2',
     description='Improving Quantum Gates With Optimal Quantum Control',
     packages=find_packages(exclude=['*tests']),
     include_package_data=True,
