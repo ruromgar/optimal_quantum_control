@@ -1,4 +1,5 @@
 import logging
+import numpy as np
 
 from .config import config
 
@@ -25,10 +26,8 @@ class OptimalQuantumControl:
 
     def fidelity(self):
         self._logger.info('Calculating fidelity...')
-        U=Unitary_grape
-        d=V.shape[1]
-        f=((abs(np.trace(np.dot(V,U))))**2)/(d*d)
-        return f
+        d = self._target_gate.shape[1]
+        return ((abs(np.trace(np.dot(self._target_gate, self.unitary_grape()))))**2)/(d*d)
 
     def control(self):
         self._logger.info('Optimizing fidelity...')
