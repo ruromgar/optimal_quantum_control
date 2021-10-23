@@ -25,7 +25,10 @@ class OptimalQuantumControl:
 
     def fidelity(self):
         self._logger.info('Calculating fidelity...')
-        pass
+        U=Unitary_grape
+        d=V.shape[1]
+        f=((abs(np.trace(np.dot(V,U))))**2)/(d*d)
+        return f
 
     def control(self):
         self._logger.info('Optimizing fidelity...')
