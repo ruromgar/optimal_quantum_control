@@ -1,9 +1,12 @@
 import logging
 import numpy as np
+from qiskit import QuantumCircuit, pulse
+from qiskit.test.mock import FakeAlmaden, FakeValencia
 
 from .config import config
 from scipy.linalg import expm
 from scipy.optimize import minimize
+
 
 # from qiskit.algorithms.optimizers.optimizer import SPSA
 
@@ -86,16 +89,26 @@ class OptimalQuantumControl:
         # self._optimum_control_params = 1 - SPSA.optimize(
         #    num_vars=len(self._initial_control_params), objective_function=self.fidelity)
 
-    def grape_pulse(self):
-        """TBD
+    def grape_pulse(self, control_parameter):
+        """Calibrate a single gate in a single qbit circuit.
 
         Returns
         -------
-        TBD
+        Circuit with calibrated gate
         """
-
         self._logger.info('Calculating GRAPE pulse...')
-        pass
+        cir = QuantumCircuit(1, 1)
+        cir.h(0)
+        cir.measure(0, 0)
+
+        backend = FakeValencia()
+        with pulse.build(backend, name='hadamard') as h_q0:
+            for w in control_parameter:
+                pulse.play(pulse.Constant(self._time_derivative, w), pulse.DriveChannel(0))
+
+        cir.add_calibration('h', [0], h_q0)
+
+        return cir
 
     def calculate_hamiltonian(self, dt):
         """TBD
@@ -110,4 +123,4 @@ class OptimalQuantumControl:
         identity = np.array([[1, 0], [0, 1]])
         properties = self._backend.properties()
 
-        return ((1/2) * properties.frequency(0) * (identity - pauli_z)) + (dt * pauli_x)
+        return ((1 / 2) * properties.frequency(0) * (identity - pauli_z)) + (dt * pauli_x)
