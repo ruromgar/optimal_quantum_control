@@ -72,9 +72,6 @@ class OptimalQuantumControl:
         """Maximizes the fidelity between the target gate and the unitary matrix,
         finding the optimal array of control parameters.
 
-        TODO: This should use SPSA as optimizer
-
-
         Returns
         -------
         Optimal array of control params
@@ -88,8 +85,13 @@ class OptimalQuantumControl:
             opt = minimizeSPSA(lambda w: 1-self.fidelity(w), x0=self._initial_control_params, bounds=bounds)
         return opt.x
 
-    def grape_pulse(self, control_parameter):
+    def grape_pulse(self, control_params):
         """Calibrate a single gate in a single qbit circuit.
+
+        Parameters
+        -------
+        control_params
+            Array of control parameters
 
         Returns
         -------
@@ -102,7 +104,7 @@ class OptimalQuantumControl:
 
         backend = FakeValencia()
         with pulse.build(backend, name='hadamard') as h_q0:
-            for w in control_parameter:
+            for w in control_params:
                 pulse.play(pulse.Constant(self._time_derivative, w), pulse.DriveChannel(0))
 
         cir.add_calibration('h', [0], h_q0)
