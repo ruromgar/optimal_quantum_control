@@ -74,20 +74,21 @@ class OptimalQuantumControl:
         """Maximizes the fidelity between the target gate and the unitary matrix,
         finding the optimal array of control parameters.
 
+        TODO: This should use SPSA as optimizer
+
+
         Returns
         -------
         Optimal array of control params
         """
 
         self._logger.info('Optimizing fidelity...')
-        return minimize(
+        optimized_params = minimize(
             lambda w: 1 - self.fidelity(w),
             x0=self._initial_control_params,
             bounds=[(0, 1) for _ in range(len(self._initial_control_params))]
         )
-        # TODO: use SPSA as optimizer
-        # self._optimum_control_params = 1 - SPSA.optimize(
-        #    num_vars=len(self._initial_control_params), objective_function=self.fidelity)
+        return optimized_params.x
 
     def grape_pulse(self, control_parameter):
         """Calibrate a single gate in a single qbit circuit.
@@ -121,6 +122,6 @@ class OptimalQuantumControl:
         pauli_x = np.array([[0, 1], [1, 0]])
         pauli_z = np.array([[1, 0], [0, -1]])
         identity = np.array([[1, 0], [0, 1]])
-        properties = self._backend.properties()
+        frequency = self._backend.properties().frequency(0)
 
-        return ((1 / 2) * properties.frequency(0) * (identity - pauli_z)) + (dt * pauli_x)
+        return ((1/2) * frequency * (identity - pauli_z)) + (dt * pauli_x)
