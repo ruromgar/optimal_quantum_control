@@ -1,6 +1,8 @@
 # Improving Quantum Gates With Optimal Quantum Control
 
-TBD
+This project is available in TestPypi under https://test.pypi.org/project/oqc/
+
+`pip install -i https://test.pypi.org/simple/ oqc`
 
 Basic usage so far (requires Python3 and virtualenv): 
 
