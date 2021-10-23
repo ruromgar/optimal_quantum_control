@@ -96,3 +96,16 @@ class OptimalQuantumControl:
 
         self._logger.info('Calculating GRAPE pulse...')
         pass
+
+def hamiltonian(self, Dt, backend):
+    pauli_x = np.matrix('0 1; 1 0')
+    pauli_z = np.matrix('1 0; 0 -1')
+    identity = np.matrix('1 0; 0 1')
+    conf = backend.configuration()
+    properties = backend.properties()
+    hamil = 0
+    n_qubits = conf.n_qubits
+    #Solo funciona para un qubit ahora mismo
+    for i in range(n_qubits + 1):
+        hamiltonian += (1/2) * properties.frequency(i) * (identity - pauli_z)
+        hamiltonian += Dt * pauli_x
