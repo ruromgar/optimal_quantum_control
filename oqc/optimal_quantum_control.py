@@ -81,21 +81,12 @@ class OptimalQuantumControl:
         """
 
         self._logger.info('Optimizing fidelity...')
-        x0 = self._initial_control_params
         bounds = [(0, 1) for _ in range(len(self._initial_control_params))]
-        if(self.ex_situ):
-            optimized_params = minimize(
-                lambda w: 1 - self.fidelity(w),
-                x0=x0,
-                bounds=bounds
-            )
+        if self._ex_situ:
+            opt = minimize(lambda w: 1-self.fidelity(w), x0=self._initial_control_params, bounds=bounds)
         else:
-            optimized_params = minimizeSPSA(
-                lambda w: 1 - self.fidelity(w),
-                x0=x0,
-                bounds=bounds
-            )
-        return optimized_params.x
+            opt = minimizeSPSA(lambda w: 1-self.fidelity(w), x0=self._initial_control_params, bounds=bounds)
+        return opt.x
 
     def grape_pulse(self, control_parameter):
         """Calibrate a single gate in a single qbit circuit.
