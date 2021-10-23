@@ -2,6 +2,8 @@ import logging
 import numpy as np
 
 from .config import config
+import numpy as np
+from scipy.linalg import expm
 
 
 class OptimalQuantumControl:
@@ -22,7 +24,11 @@ class OptimalQuantumControl:
 
     def unitary_grape(self):
         self._logger.info('Calculating unitary GRAPE...')
-        pass
+        # Calculate each unitary
+        u_matrix = expm(-1j * self._time_derivative * self._hamiltonian(self._control_params[0]))
+        for w in self._control_params[1:]:
+            u_matrix = np.matmul(expm(-1j * self._control_params * self._hamiltonian(w)), u_matrix)
+        return u_matrix
 
     def fidelity(self):
         self._logger.info('Calculating fidelity...')
