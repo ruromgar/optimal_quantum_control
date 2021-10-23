@@ -1,7 +1,7 @@
 import logging
 import numpy as np
 
-from .config import config
+from ..config import config
 from scipy.linalg import expm
 from scipy.optimize import minimize
 
