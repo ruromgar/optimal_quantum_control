@@ -31,29 +31,68 @@ class OptimalQuantumControl:
         self._target_gate = target_gate
         self._ex_situ = ex_situ
 
-        self._optimum_control_params = None
-
     def unitary_grape(self, control_params):
+        """Calculates the unitary matrix according to GRAPE.
+
+        Parameters
+        -------
+        control_params
+            Array of control parameters
+
+        Returns
+        -------
+        Unitary matrix
+        """
+
         self._logger.info('Calculating unitary GRAPE...')
-        # Calculate each unitary
         u_matrix = expm(-1j * self._time_derivative * self._hamiltonian(control_params[0]))
         for w in self._initial_control_params[1:]:
             u_matrix = np.matmul(expm(-1j * control_params * self._hamiltonian(w)), u_matrix)
         return u_matrix
 
     def fidelity(self, control_params):
+        """Calculates the fidelity between the target gate and the unitary matrix.
+
+        Parameters
+        -------
+        control_params
+            Array of control parameters
+
+        Returns
+        -------
+        Fidelity measure
+        """
+
         self._logger.info('Calculating fidelity...')
         d = self._target_gate.shape[1]
         return ((abs(np.trace(np.dot(self._target_gate, self.unitary_grape(control_params))))) ** 2) / (d * d)
 
     def control(self):
+        """Maximizes the fidelity between the target gate and the unitary matrix,
+        finding the optimal array of control parameters.
+
+        Returns
+        -------
+        Optimal array of control params
+        """
+
         self._logger.info('Optimizing fidelity...')
-        self._optimum_control_params = minimize(lambda w: 1 - self.fidelity(w), x0=self._initial_control_params,
-                                                bounds=[(0, 1) for i in range(len(self._initial_control_params))])
+        return minimize(
+            lambda w: 1 - self.fidelity(w),
+            x0=self._initial_control_params,
+            bounds=[(0, 1) for _ in range(len(self._initial_control_params))]
+        )
         # TODO: use SPSA as optimizer
         # self._optimum_control_params = 1 - SPSA.optimize(
         #    num_vars=len(self._initial_control_params), objective_function=self.fidelity)
 
     def grape_pulse(self):
+        """TBD
+
+        Returns
+        -------
+        TBD
+        """
+
         self._logger.info('Calculating GRAPE pulse...')
         pass
