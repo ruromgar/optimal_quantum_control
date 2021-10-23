@@ -6,6 +6,7 @@ from qiskit.test.mock import FakeAlmaden, FakeValencia
 from .config import config
 from scipy.linalg import expm
 from scipy.optimize import minimize
+from noisyopt import minimizeSPSA
 
 
 # from qiskit.algorithms.optimizers.optimizer import SPSA
@@ -83,11 +84,20 @@ class OptimalQuantumControl:
         """
 
         self._logger.info('Optimizing fidelity...')
-        optimized_params = minimize(
-            lambda w: 1 - self.fidelity(w),
-            x0=self._initial_control_params,
-            bounds=[(0, 1) for _ in range(len(self._initial_control_params))]
-        )
+        x0 = self._initial_control_params
+        bounds = [(0, 1) for _ in range(len(self._initial_control_params))]
+        if(self.ex_situ):
+            optimized_params = minimize(
+                lambda w: 1 - self.fidelity(w),
+                x0=x0,
+                bounds=bounds
+            )
+        else:
+            optimized_params = minimizeSPSA(
+                lambda w: 1 - self.fidelity(w),
+                x0=x0,
+                bounds=bounds
+            )
         return optimized_params.x
 
     def grape_pulse(self, control_parameter):
