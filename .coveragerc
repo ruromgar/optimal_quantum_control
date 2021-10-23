@@ -32,7 +32,7 @@ exclude_lines =
     if __name__ == .__main__.:
 
 ignore_errors = False
-fail_under = 85
+fail_under = 30
 precision = 2
 show_missing = True
 

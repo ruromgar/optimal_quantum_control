@@ -1,7 +1,7 @@
 import logging
 import numpy as np
 
-from ..config import config
+from .config import config
 from scipy.linalg import expm
 from scipy.optimize import minimize
 
@@ -12,7 +12,7 @@ class OptimalQuantumControl:
     def __init__(
             self,
             initial_control_params,
-            hamiltonian,
+            backend,
             time_derivative,
             target_gate,
             ex_situ: bool = True
@@ -26,7 +26,7 @@ class OptimalQuantumControl:
         self._logger.addHandler(log_handler)
 
         self._initial_control_params = initial_control_params
-        self._hamiltonian = hamiltonian
+        self._backend = backend
         self._time_derivative = time_derivative
         self._target_gate = target_gate
         self._ex_situ = ex_situ
@@ -45,9 +45,9 @@ class OptimalQuantumControl:
         """
 
         self._logger.info('Calculating unitary GRAPE...')
-        u_matrix = expm(-1j * self._time_derivative * self._hamiltonian(control_params[0]))
-        for w in self._initial_control_params[1:]:
-            u_matrix = np.matmul(expm(-1j * control_params * self._hamiltonian(w)), u_matrix)
+        u_matrix = expm(-1j * self._time_derivative * self.calculate_hamiltonian(control_params[0]))
+        for w in control_params[1:]:
+            u_matrix = np.matmul(expm(-1j * control_params * self.calculate_hamiltonian(w)), u_matrix)
         return u_matrix
 
     def fidelity(self, control_params):
@@ -97,15 +97,17 @@ class OptimalQuantumControl:
         self._logger.info('Calculating GRAPE pulse...')
         pass
 
-def hamiltonian(self, Dt, backend):
-    pauli_x = np.matrix('0 1; 1 0')
-    pauli_z = np.matrix('1 0; 0 -1')
-    identity = np.matrix('1 0; 0 1')
-    conf = backend.configuration()
-    properties = backend.properties()
-    hamil = 0
-    n_qubits = conf.n_qubits
-    #Solo funciona para un qubit ahora mismo
-    for i in range(n_qubits + 1):
-        hamiltonian += (1/2) * properties.frequency(i) * (identity - pauli_z)
-        hamiltonian += Dt * pauli_x
+    def calculate_hamiltonian(self, dt):
+        """TBD
+
+        Returns
+        -------
+        TBD
+        """
+
+        pauli_x = np.array([[0, 1], [1, 0]])
+        pauli_z = np.array([[1, 0], [0, -1]])
+        identity = np.array([[1, 0], [0, 1]])
+        properties = self._backend.properties()
+
+        return ((1/2) * properties.frequency(0) * (identity - pauli_z)) + (dt * pauli_x)

@@ -1,8 +1,6 @@
 from unittest.mock import Mock
 
-import pytest
-from ..application.optimal_quantum_control import OptimalQuantumControl
-from ..config import test_config as config
+from optimal_quantum_control.oqc.optimal_quantum_control import OptimalQuantumControl
 
 import numpy as np
 
@@ -12,15 +10,15 @@ class TestOptimalQuantumControl:
         """Tests the instance
         """
         initial_control_params = None
-        hamiltonian = None
+        backend = None
         time_derivative = None
         target_gate = None
         ex_situ = True
 
-        oqc = OptimalQuantumControl(initial_control_params, hamiltonian, time_derivative, target_gate, ex_situ)
+        oqc = OptimalQuantumControl(initial_control_params, backend, time_derivative, target_gate, ex_situ)
 
         assert oqc._initial_control_params is initial_control_params
-        assert oqc._hamiltonian is hamiltonian
+        assert oqc._backend is backend
         assert oqc._time_derivative is time_derivative
         assert oqc._target_gate is target_gate
         assert oqc._ex_situ is ex_situ

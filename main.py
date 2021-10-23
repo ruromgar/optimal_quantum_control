@@ -1,4 +1,4 @@
-from src.application.optimal_quantum_control import OptimalQuantumControl
+from oqc.optimal_quantum_control import OptimalQuantumControl
 
 control = OptimalQuantumControl(None, None, None, None, True)
 
