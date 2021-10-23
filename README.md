@@ -2,7 +2,7 @@
 
 This project is available in TestPypi under https://test.pypi.org/project/oqc/
 
-`pip install -i https://test.pypi.org/simple/ oqc`
+`pip install -i https://test.pypi.org/simple/ oqc==1.0.1`
 
 Basic usage so far (requires Python3 and virtualenv): 
 
