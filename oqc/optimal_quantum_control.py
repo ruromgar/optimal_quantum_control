@@ -66,7 +66,9 @@ class OptimalQuantumControl:
 
         self._logger.info('Calculating fidelity...')
         d2 = np.power(self._target_gate.shape[1], 2)
-        return 1 - ((abs(np.trace(np.dot(self._target_gate, self.unitary_grape(control_params))))) ** 2) / d2
+        fid = 1 - ((abs(np.trace(np.dot(self._target_gate.T.conj(), self.unitary_grape(control_params))))) ** 2) / d2
+        print(fid)
+        return fid
 
     def control(self):
         """Maximizes the fidelity between the target gate and the unitary matrix,
