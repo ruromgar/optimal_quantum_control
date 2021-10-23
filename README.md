@@ -1,2 +1,10 @@
-# optimal_quantum_control
-Improving quantum gates with optimal quantum control
+# Improving Quantum Gates With Optimal Quantum Control
+
+TBD
+
+Basic usage so far: 
+
+```
+cd optimal_quantum_control
+python3 main.py
+```
