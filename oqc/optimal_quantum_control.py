@@ -53,7 +53,7 @@ class OptimalQuantumControl:
         return u_matrix
 
     def fidelity(self, control_params):
-        """Calculates the fidelity between the target gate and the unitary matrix.
+        """Calculates the inverse fidelity between the target gate and the unitary matrix.
 
         Parameters
         -------
@@ -62,7 +62,7 @@ class OptimalQuantumControl:
 
         Returns
         -------
-        Fidelity measure
+        Inverse fidelity measure
         """
 
         self._logger.info('Calculating fidelity...')
