@@ -1,12 +1,13 @@
 import logging
+
 import numpy as np
+from noisyopt import minimizeSPSA
 from qiskit import QuantumCircuit, pulse
 from qiskit.test.mock import FakeValencia
-
-from .config import config
 from scipy.linalg import expm
 from scipy.optimize import minimize
-from noisyopt import minimizeSPSA
+
+from .config import config
 
 
 class OptimalQuantumControl:
@@ -45,14 +46,14 @@ class OptimalQuantumControl:
         Unitary matrix
         """
 
-        self._logger.info('Calculating unitary GRAPE...')
+        # self._logger.info('Calculating unitary GRAPE...')
         u_matrix = expm(-1j * self._time_derivative * self.calculate_hamiltonian(control_params[0]))
         for w in control_params[1:]:
-            u_matrix = np.matmul(expm(-1j * control_params * self.calculate_hamiltonian(w)), u_matrix)
+            u_matrix = np.matmul(expm(-1j * self._time_derivative * self.calculate_hamiltonian(w)), u_matrix)
         return u_matrix
 
     def fidelity(self, control_params):
-        """Calculates the fidelity between the target gate and the unitary matrix.
+        """Calculates the inverse fidelity between the target gate and the unitary matrix.
 
         Parameters
         -------
@@ -61,12 +62,14 @@ class OptimalQuantumControl:
 
         Returns
         -------
-        Fidelity measure
+        Inverse fidelity measure
         """
 
         self._logger.info('Calculating fidelity...')
-        d = self._target_gate.shape[1]
-        return ((abs(np.trace(np.dot(self._target_gate, self.unitary_grape(control_params))))) ** 2) / (d * d)
+        d2 = np.power(self._target_gate.shape[1], 2)
+        fid = 1 - ((abs(np.trace(np.matmul(self._target_gate.T.conj(), self.unitary_grape(control_params))))) ** 2) / d2
+        print(fid)
+        return fid
 
     def control(self):
         """Maximizes the fidelity between the target gate and the unitary matrix,
@@ -80,9 +83,9 @@ class OptimalQuantumControl:
         self._logger.info('Optimizing fidelity...')
         bounds = [(0, 1) for _ in range(len(self._initial_control_params))]
         if self._ex_situ:
-            opt = minimize(lambda w: 1-self.fidelity(w), x0=self._initial_control_params, bounds=bounds)
+            opt = minimize(self.fidelity, x0=self._initial_control_params, bounds=bounds)
         else:
-            opt = minimizeSPSA(lambda w: 1-self.fidelity(w), x0=self._initial_control_params, bounds=bounds)
+            opt = minimizeSPSA(self.fidelity, x0=self._initial_control_params, bounds=bounds)
         return opt.x
 
     def grape_pulse(self, control_params):
@@ -108,21 +111,25 @@ class OptimalQuantumControl:
                 pulse.play(pulse.Constant(self._time_derivative, w), pulse.DriveChannel(0))
 
         cir.add_calibration('h', [0], h_q0)
-
         return cir
 
     def calculate_hamiltonian(self, dt):
-        """TBD
+        """Calculates the hamiltonian matrix
+
+        Parameters
+        -------
+        dt
+            Hamiltonian constant Dt
 
         Returns
         -------
-        TBD
+        Hamiltonian matrix
         """
 
         pauli_x = np.array([[0, 1], [1, 0]])
         pauli_z = np.array([[1, 0], [0, -1]])
         identity = np.array([[1, 0], [0, 1]])
-        amplitude = self._backend.configuration().hamiltonian['vars']['omegad0']
-        frequency = self._backend.properties().frequency(0)
+        amplitude = 1 # self._backend.configuration().hamiltonian['vars']['omegad0'] / 10e9
+        frequency = 1 # self._backend.properties().frequency(0) / 10e9
 
-        return ((1/2) * frequency * (identity - pauli_z)) + (amplitude * dt * pauli_x)
+        return ((1 / 2) * frequency * (identity - pauli_z)) + (amplitude * dt * pauli_x)
