@@ -1,9 +1,18 @@
 # Improving Quantum Gates With Optimal Quantum Control
 
 ## Abstract
-It is necessary to improve the fidelity of quantum gates to archive computational advantage with quantum computers. An alternative to do that is to use optimal quantum control. This is based on optimizing the parameters of a Hamiltonian to maximize the fidelity with a target quantum gate. The evaluation of the fidelity can be carried out numerically (ex-situ) or experimentally (in-situ). In this project, we propose implementing a Qiskit library to perform optimal quantum control.
+It is necessary to improve the fidelity of quantum gates to archive computational advantage with quantum computers [1]. An alternative to do that is to use optimal quantum control [2]. This is based on optimizing the parameters of a Hamiltonian to maximize the fidelity with a target quantum gate. The evaluation of the fidelity can be carried out numerically (ex-situ) or experimentally (in-situ) [3]. In this project, we propose implementing a Qiskit library to perform optimal quantum control.
 
-Our objective is to build a Qiskit library to perform ex-situ and in-situ optimal quantum control. Our control parameters will be the amplitudes of a GRAPE (Gradient Ascent Pulse Engineering) pulse, which will be implemented using Qiskit Pulse. The experimental evaluation of the fidelity will be performed by Direct Fidelity Estimation. We also propose a mixed protocol, where first the ex-situ quantum control is carried out, to then refine the result with in-situ quantum control. We expect to implement some relevant gate with our routines, such as NOT-gate or Hadamard.
+Our objective is to build a Qiskit library to perform ex-situ and in-situ optimal quantum control. Our control parameters will be the amplitudes of a GRAPE (Gradient Ascent Pulse Engineering) pulse, which will be implemented using Qiskit Pulse. The experimental evaluation of the fidelity will be performed by Direct Fidelity Estimation [4]. We also propose a mixed protocol, where first the ex-situ quantum control is carried out, to then refine the result with in-situ quantum control. We expect to implement some relevant gate with our routines, such as NOT-gate or Hadamard.
+
+[1] https://twitter.com/jaygambetta/status/1445115380616335373 
+
+[2] Y. Shi et al., "Optimized Compilation of Aggregated Instructions for Realistic Quantum Computers".
+
+[3] C. Ferrie and O. Moussa, "Robust and efficient in situ quantum control".
+
+[4] S. T. Flammia and Y.-K. Liu, "Direct Fidelity Estimation from Few Pauli Measurements".
+
 
 ## Members
 - Luciano Pereira Valenzuela
