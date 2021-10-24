@@ -29,9 +29,13 @@ class OptimalQuantumControl:
 
         self._initial_control_params = initial_control_params
         self._backend = backend
+        self._backend_amplitude = self._backend.configuration().hamiltonian['vars']['omegad0']
+        self._backend_frequency = self._backend.properties().frequency(0)
         self._time_derivative = time_derivative
         self._target_gate = target_gate
         self._ex_situ = ex_situ
+        self._time_derivative = 1 / max(self._backend_amplitude, self._backend_frequency)
+        self._fidelities = list()
 
     def unitary_grape(self, control_params):
         """Calculates the unitary matrix according to GRAPE.
@@ -68,7 +72,8 @@ class OptimalQuantumControl:
         self._logger.info('Calculating fidelity...')
         d2 = np.power(self._target_gate.shape[1], 2)
         fid = 1 - ((abs(np.trace(np.matmul(self._target_gate.T.conj(), self.unitary_grape(control_params))))) ** 2) / d2
-        print(fid)
+        #print(fid)
+        self._fidelities.append(fid)
         return fid
 
     def control(self):
@@ -81,11 +86,15 @@ class OptimalQuantumControl:
         """
 
         self._logger.info('Optimizing fidelity...')
-        bounds = [(0, 1) for _ in range(len(self._initial_control_params))]
+
+        bounds = ()
+        for i in range(len(self._initial_control_params)):
+            bounds += ((0.0, 1.0,),)
+
         if self._ex_situ:
             opt = minimize(self.fidelity, x0=self._initial_control_params, bounds=bounds)
         else:
-            opt = minimizeSPSA(self.fidelity, x0=self._initial_control_params, bounds=bounds)
+            opt = minimizeSPSA(self.fidelity, x0=self._initial_control_params, bounds=bounds, paired = False)
         return opt.x
 
     def grape_pulse(self, control_params):
@@ -129,7 +138,5 @@ class OptimalQuantumControl:
         pauli_x = np.array([[0, 1], [1, 0]])
         pauli_z = np.array([[1, 0], [0, -1]])
         identity = np.array([[1, 0], [0, 1]])
-        amplitude = 1 # self._backend.configuration().hamiltonian['vars']['omegad0'] / 10e9
-        frequency = 1 # self._backend.properties().frequency(0) / 10e9
 
-        return ((1 / 2) * frequency * (identity - pauli_z)) + (amplitude * dt * pauli_x)
+        return ((1 / 2) * self._backend_frequency * (identity - pauli_z)) + (self._backend_amplitude * dt * pauli_x)
