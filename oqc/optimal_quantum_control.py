@@ -85,7 +85,7 @@ class OptimalQuantumControl:
         if self._ex_situ:
             opt = minimize(self.fidelity, x0=self._initial_control_params, bounds=bounds)
         else:
-            opt = minimizeSPSA(self.fidelity, x0=self._initial_control_params, bounds=bounds)
+            opt = minimizeSPSA(self.fidelity, x0=self._initial_control_params, bounds=bounds, paired = False)
         return opt.x
 
     def grape_pulse(self, control_params):
