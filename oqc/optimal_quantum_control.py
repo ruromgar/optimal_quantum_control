@@ -517,7 +517,7 @@ def Expected_Value_Qiskit( circ_U , Labels, quantum_instance, shots=2**13 ):
     return ExpectedValues
 
 def circuit2schedule(circuit, backend):
-    transpiled_circuit = transpile(circuit, backend)  # Undefined Hadamard is replaced by U1
+    transpiled_circuit = transpile(circuit, backend)  
     schedule = build_schedule(transpiled_circuit, backend)
     return schedule
 
